@@ -13,7 +13,9 @@ interface BottomNavProps {
   activePage?: "home" | "calendar" | "stats" | "profile";
 }
 
-export default function BottomNav({ activePage = "home" }: BottomNavProps) {
+export default async function BottomNav({
+  activePage = "home",
+}: BottomNavProps) {
   return (
     <nav className="border-border bg-background fixed right-0 bottom-0 left-0 z-50 flex items-center justify-center gap-6 rounded-t-4xl border px-6 py-4">
       <Link href="/" className="p-3">
@@ -51,7 +53,7 @@ export default function BottomNav({ activePage = "home" }: BottomNavProps) {
         />
       </Link>
 
-      <Link href="/" className="p-3">
+      <Link href="/profile" className="p-3">
         <UserRound
           className={cn(
             "size-6",

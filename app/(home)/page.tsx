@@ -26,16 +26,9 @@ export default async function Home() {
   const today = dayjs();
   const homeData = await getHomeData(today.format("YYYY-MM-DD"));
 
-  if (homeData.status === 401) redirect("/auth");
-
-  console.log("HOME DATA:", homeData);
-
-  if (homeData.status !== 200 || !homeData.data) {
-    throw new Error("Erro ao carregar dados da home");
-  }
+  if (homeData.status !== 200) redirect("/auth");
 
   const { consistencyByDay, workoutStreak, todayWorkoutDay } = homeData.data;
-
   const userName = session.data.user.name?.split(" ")[0] ?? "";
 
   return (

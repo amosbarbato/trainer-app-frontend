@@ -1,5 +1,7 @@
 import Link from "next/link";
+import dayjs from "dayjs";
 import { cn } from "@/_lib/utils";
+import { getHomeData } from "@/_lib/api/fetch-generated";
 import { Button } from "./ui/button";
 import {
   Calendar,
@@ -16,6 +18,14 @@ interface BottomNavProps {
 export default async function BottomNav({
   activePage = "home",
 }: BottomNavProps) {
+  const today = dayjs();
+  const homeData = await getHomeData(today.format("YYYY-MM-DD"));
+
+  const calendarHref =
+    homeData.status === 200 && homeData.data.todayWorkoutDay
+      ? `workout-plans/${homeData.data.todayWorkoutDay.workoutPlanId}/days/${homeData.data.todayWorkoutDay.id}`
+      : undefined;
+
   return (
     <nav className="border-border bg-background fixed right-0 bottom-0 left-0 z-50 flex items-center justify-center gap-6 rounded-t-4xl border px-6 py-4">
       <Link href="/" className="p-3">
@@ -27,16 +37,29 @@ export default async function BottomNav({
         />
       </Link>
 
-      <Link href="/" className="p-3">
-        <Calendar
-          className={cn(
-            "size-6",
-            activePage === "calendar"
-              ? "text-foreground"
-              : "text-muted-foreground",
-          )}
-        />
-      </Link>
+      {calendarHref ? (
+        <Link href={calendarHref} className="p-3">
+          <Calendar
+            className={cn(
+              "size-6",
+              activePage === "calendar"
+                ? "text-foreground"
+                : "text-muted-foreground",
+            )}
+          />
+        </Link>
+      ) : (
+        <button className="p-3">
+          <Calendar
+            className={cn(
+              "size-6",
+              activePage === "calendar"
+                ? "text-foreground"
+                : "text-muted-foreground",
+            )}
+          />
+        </button>
+      )}
 
       <Button className="h-auto rounded-full p-4">
         <Sparkles className="size-6" />

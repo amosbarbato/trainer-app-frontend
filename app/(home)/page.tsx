@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import dayjs from "dayjs";
@@ -106,15 +107,19 @@ export default async function Home() {
         </div>
 
         {todayWorkoutDay ? (
-          <WorkoutDayCard
-            name={todayWorkoutDay.name}
-            weekDay={todayWorkoutDay.weekDay}
-            estimatedDurationInSeconds={
-              todayWorkoutDay.estimatedDurationInSeconds
-            }
-            exercisesCount={todayWorkoutDay.exercisesCount}
-            coverImageUrl={todayWorkoutDay.coverImageUrl}
-          />
+          <Link
+            href={`workout-plans/${todayWorkoutDay.workoutPlanId}/days/${todayWorkoutDay.id}`}
+          >
+            <WorkoutDayCard
+              name={todayWorkoutDay.name}
+              weekDay={todayWorkoutDay.weekDay}
+              estimatedDurationInSeconds={
+                todayWorkoutDay.estimatedDurationInSeconds
+              }
+              exercisesCount={todayWorkoutDay.exercisesCount}
+              coverImageUrl={todayWorkoutDay.coverImageUrl}
+            />
+          </Link>
         ) : (
           <p className="text-muted-foreground text-center text-sm">
             Você ainda não tem treino para hoje.

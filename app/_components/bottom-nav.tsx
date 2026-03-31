@@ -22,9 +22,9 @@ export default async function BottomNav({
   const homeData = await getHomeData(today.format("YYYY-MM-DD"));
 
   const calendarHref =
-    homeData.status === 200 && homeData.data.todayWorkoutDay
-      ? `workout-plans/${homeData.data.todayWorkoutDay.workoutPlanId}/days/${homeData.data.todayWorkoutDay.id}`
-      : undefined;
+    homeData.status === 200 && homeData.data.activeWorkoutPlanId
+      ? `workout-plans/${homeData.data.activeWorkoutPlanId}`
+      : null;
 
   return (
     <nav className="border-border bg-background fixed right-0 bottom-0 left-0 z-50 flex items-center justify-center gap-6 rounded-t-4xl border px-6 py-4">

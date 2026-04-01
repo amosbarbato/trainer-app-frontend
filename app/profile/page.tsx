@@ -1,7 +1,8 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import dayjs from "dayjs";
 import { authClient } from "@/_lib/auth-client";
-import { getMe } from "@/_lib/api/fetch-generated";
+import { getHomeData, getMe } from "@/_lib/api/fetch-generated";
 import { Avatar, AvatarFallback, AvatarImage } from "@/_components/ui/avatar";
 import { StatCard } from "@/_components/stat-card";
 import { LogoutButton } from "@/_components/logout-button";
@@ -15,10 +16,19 @@ export default async function Profile() {
 
   if (!session.data?.user) redirect("/auth");
 
-  const userData = await getMe();
+  const [userData, homeData] = await Promise.all([
+    getMe(),
+    getHomeData(dayjs().format("YYYY-MM-DD")),
+  ]);
+
   if (userData.status !== 200) {
     throw new Error("Não foi possível recuperar os dados do usuário.");
   }
+
+  const needsOnboarding =
+    (homeData.status === 200 && !homeData.data.activeWorkoutPlanId) ||
+    !userData.data;
+  if (needsOnboarding) redirect("/onboarding");
 
   const user = session.data.user;
   const data = userData.data;

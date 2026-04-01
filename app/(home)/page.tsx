@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import dayjs from "dayjs";
 import { authClient } from "@/_lib/auth-client";
-import { getHomeData } from "@/_lib/api/fetch-generated";
+import { getHomeData, getMe } from "@/_lib/api/fetch-generated";
 import {
   Card,
   CardContent,
@@ -25,9 +25,17 @@ export default async function Home() {
   if (!session.data?.user) redirect("/auth");
 
   const today = dayjs();
-  const homeData = await getHomeData(today.format("YYYY-MM-DD"));
+  const [homeData, userData] = await Promise.all([
+    getHomeData(dayjs().format("YYYY-MM-DD")),
+    getMe(),
+  ]);
 
   if (homeData.status !== 200) redirect("/auth");
+
+  const needsOnboarding =
+    !homeData.data.activeWorkoutPlanId ||
+    (userData.status === 200 && !userData.data);
+  if (needsOnboarding) redirect("/onboarding");
 
   const { consistencyByDay, workoutStreak, todayWorkoutDay } = homeData.data;
   const userName = session.data.user.name?.split(" ")[0] ?? "";

@@ -1,8 +1,13 @@
 import Image from "next/image";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import dayjs from "dayjs";
 import { authClient } from "@/_lib/auth-client";
-import { getWorkoutPlansWorkoutPlanIdDaysWorkoutDayId } from "@/_lib/api/fetch-generated";
+import {
+  getHomeData,
+  getMe,
+  getWorkoutPlansWorkoutPlanIdDaysWorkoutDayId,
+} from "@/_lib/api/fetch-generated";
 import {
   Card,
   CardContent,
@@ -41,10 +46,16 @@ export default async function WorkoutDayPage({
   if (!session.data?.user) redirect("/auth");
 
   const { planId: workoutPlanId, dayId } = await params;
-  const workoutDayData = await getWorkoutPlansWorkoutPlanIdDaysWorkoutDayId(
-    workoutPlanId,
-    dayId,
-  );
+  const [workoutDayData, homeData, userData] = await Promise.all([
+    getWorkoutPlansWorkoutPlanIdDaysWorkoutDayId(workoutPlanId, dayId),
+    getHomeData(dayjs().format("YYYY-MM-DD")),
+    getMe(),
+  ]);
+
+  const needsOnboarding =
+    (homeData.status === 200 && !homeData.data.activeWorkoutPlanId) ||
+    (userData.status === 200 && !userData.data);
+  if (needsOnboarding) redirect("/onboarding");
 
   if (workoutDayData.status !== 200) redirect("/");
 

@@ -2,7 +2,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import dayjs from "dayjs";
 import { authClient } from "@/_lib/auth-client";
-import { getStats } from "@/_lib/api/fetch-generated";
+import { getHomeData, getMe, getStats } from "@/_lib/api/fetch-generated";
 import { formatTotalTime } from "@/_utils";
 import { StreakBanner } from "./_components/streak-banner";
 import { StatsHeatmap } from "./_components/stats-heatmap";
@@ -21,7 +21,17 @@ export default async function StatsPage() {
   const from = today.subtract(2, "month").startOf("month").format("YYYY-MM-DD");
   const to = today.endOf("month").format("YYYY-MM-DD");
 
-  const statsResponse = await getStats({ from, to });
+  const [statsResponse, homeData, userData] = await Promise.all([
+    getStats({ from, to }),
+    getHomeData(today.format("YYYY-MM-DD")),
+    getMe(),
+  ]);
+
+  const needsOnboarding =
+    (homeData.status === 200 && !homeData.data.activeWorkoutPlanId) ||
+    (userData.status === 200 && !userData.data);
+  if (needsOnboarding) redirect("/onboarding");
+
   if (statsResponse.status !== 200) {
     throw new Error("Failed to fetch stats");
   }

@@ -3,7 +3,11 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { authClient } from "@/_lib/auth-client";
-import { getWorkoutPlansWorkoutPlanId } from "@/_lib/api/fetch-generated";
+import {
+  getHomeData,
+  getMe,
+  getWorkoutPlansWorkoutPlanId,
+} from "@/_lib/api/fetch-generated";
 import {
   Card,
   CardContent,
@@ -15,6 +19,7 @@ import RestDayCard from "@/_components/rest-day-card";
 import WorkoutDayCard from "@/_components/workout-day-card";
 import BottomNav from "@/_components/bottom-nav";
 import { Goal } from "lucide-react";
+import dayjs from "dayjs";
 
 const WEEKDAY_ORDER = [
   "MONDAY",
@@ -38,7 +43,16 @@ export default async function WorkoutPlanPage({
   if (!session.data?.user) redirect("/auth");
 
   const { planId } = await params;
-  const workoutPlanData = await getWorkoutPlansWorkoutPlanId(planId);
+  const [workoutPlanData, homeData, userData] = await Promise.all([
+    getWorkoutPlansWorkoutPlanId(planId),
+    getHomeData(dayjs().format("YYYY-MM-DD")),
+    getMe(),
+  ]);
+
+  const needsOnboarding =
+    (homeData.status === 200 && !homeData.data.activeWorkoutPlanId) ||
+    (userData.status === 200 && !userData.data);
+  if (needsOnboarding) redirect("/onboarding");
 
   if (workoutPlanData.status !== 200) redirect("/");
 

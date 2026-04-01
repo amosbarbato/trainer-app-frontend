@@ -65,7 +65,7 @@ export default async function BottomNav({
         <Sparkles className="size-6" />
       </Button>
 
-      <Link href="/" className="p-3">
+      <Link href="/stats" className="p-3">
         <ChartNoAxesColumn
           className={cn(
             "size-6",

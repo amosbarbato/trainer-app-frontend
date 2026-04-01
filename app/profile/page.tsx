@@ -2,9 +2,8 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { authClient } from "@/_lib/auth-client";
 import { getMe } from "@/_lib/api/fetch-generated";
-import { Card, CardContent } from "@/_components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/_components/ui/avatar";
-import { Badge } from "@/_components/ui/badge";
+import { StatCard } from "@/_components/stat-card";
 import { LogoutButton } from "@/_components/logout-button";
 import BottomNav from "@/_components/bottom-nav";
 import { BicepsFlexed, Ruler, User, Weight } from "lucide-react";
@@ -56,66 +55,14 @@ export default async function Profile() {
         </div>
 
         <div className="grid w-full grid-cols-2 gap-3">
-          <Card className="bg-primary/8 ring-primary/15">
-            <CardContent className="flex flex-col items-center gap-5">
-              <Badge className="bg-primary/10 p-2.5">
-                <Weight className="text-primary size-4" />
-              </Badge>
-              <div className="flex flex-col items-center gap-1.5">
-                <span className="font-heading text-2xl leading-[1.15] font-semibold">
-                  {weightInKg}
-                </span>
-                <span className="font-heading text-muted-foreground text-xs leading-[1.4]">
-                  KG
-                </span>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="bg-primary/8 ring-primary/15">
-            <CardContent className="flex flex-col items-center gap-5">
-              <Badge className="bg-primary/10 p-2.5">
-                <Ruler className="text-primary size-4" />
-              </Badge>
-              <div className="flex flex-col items-center gap-1.5">
-                <span className="font-heading text-2xl leading-[1.15] font-semibold">
-                  {heightInCm}
-                </span>
-                <span className="font-heading text-muted-foreground text-xs leading-[1.4]">
-                  CM
-                </span>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="bg-primary/8 ring-primary/15">
-            <CardContent className="flex flex-col items-center gap-5">
-              <Badge className="bg-primary/10 p-2.5">
-                <BicepsFlexed className="text-primary size-4" />
-              </Badge>
-              <div className="flex flex-col items-center gap-1.5">
-                <span className="font-heading text-2xl leading-[1.15] font-semibold">
-                  {bodyFatPercentage}%
-                </span>
-                <span className="font-heading text-muted-foreground text-xs leading-[1.4]">
-                  GC
-                </span>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="bg-primary/8 ring-primary/15">
-            <CardContent className="flex flex-col items-center gap-5">
-              <Badge className="bg-primary/10 p-2.5">
-                <User className="text-primary size-4" />
-              </Badge>
-              <div className="flex flex-col items-center gap-1.5">
-                <span className="font-heading text-2xl leading-[1.15] font-semibold">
-                  {age}
-                </span>
-                <span className="font-heading text-muted-foreground text-xs leading-[1.4]">
-                  ANOS
-                </span>
-              </div>
-            </CardContent>
-          </Card>
+          <StatCard icon={Weight} value={String(weightInKg)} label="KG" />
+          <StatCard icon={Ruler} value={String(heightInCm)} label="CM" />
+          <StatCard
+            icon={BicepsFlexed}
+            value={`${String(bodyFatPercentage)}%`}
+            label="GC"
+          />
+          <StatCard icon={User} value={String(age)} label="ANOS" />
         </div>
 
         <LogoutButton />

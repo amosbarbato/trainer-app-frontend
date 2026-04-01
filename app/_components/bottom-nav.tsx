@@ -2,14 +2,8 @@ import Link from "next/link";
 import dayjs from "dayjs";
 import { cn } from "@/_lib/utils";
 import { getHomeData } from "@/_lib/api/fetch-generated";
-import { Button } from "./ui/button";
-import {
-  Calendar,
-  ChartNoAxesColumn,
-  House,
-  Sparkles,
-  UserRound,
-} from "lucide-react";
+import { ChatOpenButton } from "./chat-open-button";
+import { Calendar, ChartNoAxesColumn, House, UserRound } from "lucide-react";
 
 interface BottomNavProps {
   activePage?: "home" | "calendar" | "stats" | "profile";
@@ -61,9 +55,7 @@ export default async function BottomNav({
         </button>
       )}
 
-      <Button className="h-auto rounded-full p-4">
-        <Sparkles className="size-6" />
-      </Button>
+      <ChatOpenButton />
 
       <Link href="/stats" className="p-3">
         <ChartNoAxesColumn

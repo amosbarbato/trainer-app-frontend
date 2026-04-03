@@ -8,7 +8,7 @@ export default function SignInWithGoogle() {
   const handleGoogleLogin = async () => {
     const { error } = await authClient.signIn.social({
       provider: "google",
-      callbackURL: `${process.env.NEXT_PUBLIC_BASE_URL}`,
+      callbackURL: `${process.env.NEXT_PUBLIC_BASE_URL}/callback`,
     });
 
     if (error) console.error(error.message);

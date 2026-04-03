@@ -15,14 +15,20 @@ import { Badge } from "@/_components/ui/badge";
 import ConsistencyTracker from "@/_components/consistency-tracker";
 import WorkoutDayCard from "@/_components/workout-day-card";
 import BottomNav from "@/_components/bottom-nav";
-import { Flame } from "lucide-react";
+import { Flame, Loader2 } from "lucide-react";
 
 export default async function Home() {
   const session = await authClient.getSession({
     fetchOptions: { headers: await headers() },
   });
 
-  if (!session.data?.user) redirect("/auth");
+  if (!session.data?.user) {
+    return (
+      <div className="flex min-h-svh items-center justify-center">
+        <Loader2 className="size-8 animate-spin" />
+      </div>
+    );
+  }
 
   const today = dayjs();
   const [homeData, userData] = await Promise.all([

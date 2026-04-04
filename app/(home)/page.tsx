@@ -19,14 +19,20 @@ import { Flame, Loader2 } from "lucide-react";
 import { AuthGuard } from "@/_components/auth-guard";
 
 export default async function Home() {
+  const h = await headers();
+
   const session = await authClient.getSession({
-    fetchOptions: { headers: await headers() },
+    fetchOptions: { headers: h },
   });
 
   const today = dayjs();
   const [homeData, userData] = await Promise.all([
-    getHomeData(dayjs().format("YYYY-MM-DD")),
-    getMe(),
+    getHomeData(dayjs().format("YYYY-MM-DD"), {
+      headers: { cookie: h.get("cookie") ?? "" },
+    }),
+    getMe({
+      headers: { cookie: h.get("cookie") ?? "" },
+    }),
   ]);
 
   if (homeData.status !== 200) redirect("/auth");

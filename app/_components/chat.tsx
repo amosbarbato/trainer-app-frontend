@@ -91,7 +91,10 @@ export function Chat() {
         if (!open) setChatParams({ chat_open: false });
       }}
     >
-      <SheetContent side="bottom" className="m-4 max-h-5/6 gap-0 rounded-3xl">
+      <SheetContent
+        side="bottom"
+        className="m-4 max-h-5/6 min-h-5/6 gap-0 rounded-3xl"
+      >
         <SheetHeader className="flex flex-row gap-2">
           <Button
             size="icon"
@@ -108,7 +111,7 @@ export function Chat() {
           </div>
         </SheetHeader>
 
-        <div className="flex-1 overflow-y-auto pb-5">
+        <div className="flex-1 overflow-y-auto py-5">
           {messages.map((message) => (
             <div
               key={message.id}
@@ -153,10 +156,20 @@ export function Chat() {
             </div>
           ))}
 
+          {isStreaming && (
+            <div className="flex items-start gap-2 pt-2 pr-15 pl-5">
+              <div className="bg-secondary flex gap-1 rounded-xl p-3">
+                <span className="bg-foreground/50 h-2 w-2 animate-bounce rounded-full" />
+                <span className="bg-foreground/50 h-2 w-2 animate-bounce rounded-full [animation-delay:0.2s]" />
+                <span className="bg-foreground/50 h-2 w-2 animate-bounce rounded-full [animation-delay:0.4s]" />
+              </div>
+            </div>
+          )}
+
           <div ref={messagesEndRef} />
         </div>
 
-        <div className="flex shrink-0 flex-col gap-3">
+        <div className="flex shrink-0 flex-col gap-3 pb-5">
           {messages.length === 0 && (
             <div className="flex gap-2.5 overflow-x-auto px-5">
               {SUGGESTED_MESSAGES.map((suggestion) => (
@@ -179,6 +192,7 @@ export function Chat() {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Digite sua mensagem"
+            disabled={isLoading}
           />
           <Button
             size="icon"

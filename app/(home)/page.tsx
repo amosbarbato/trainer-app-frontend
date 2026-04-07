@@ -13,26 +13,21 @@ import {
 } from "@/_components/ui/card";
 import { Badge } from "@/_components/ui/badge";
 import ConsistencyTracker from "@/_components/consistency-tracker";
+import RestDayCard from "@/_components/rest-day-card";
 import WorkoutDayCard from "@/_components/workout-day-card";
 import BottomNav from "@/_components/bottom-nav";
-import { Flame, Loader2 } from "lucide-react";
 import { AuthGuard } from "@/_components/auth-guard";
+import { Flame } from "lucide-react";
 
 export default async function Home() {
-  const h = await headers();
-
   const session = await authClient.getSession({
-    fetchOptions: { headers: h },
+    fetchOptions: { headers: await headers() },
   });
 
   const today = dayjs();
   const [homeData, userData] = await Promise.all([
-    getHomeData(dayjs().format("YYYY-MM-DD"), {
-      headers: { cookie: h.get("cookie") ?? "" },
-    }),
-    getMe({
-      headers: { cookie: h.get("cookie") ?? "" },
-    }),
+    getHomeData(dayjs().format("YYYY-MM-DD")),
+    getMe(),
   ]);
 
   if (homeData.status !== 200) redirect("/auth");
@@ -123,19 +118,23 @@ export default async function Home() {
           </div>
 
           {todayWorkoutDay ? (
-            <Link
-              href={`workout-plans/${todayWorkoutDay.workoutPlanId}/days/${todayWorkoutDay.id}`}
-            >
-              <WorkoutDayCard
-                name={todayWorkoutDay.name}
-                weekDay={todayWorkoutDay.weekDay}
-                estimatedDurationInSeconds={
-                  todayWorkoutDay.estimatedDurationInSeconds
-                }
-                exercisesCount={todayWorkoutDay.exercisesCount}
-                coverImageUrl={todayWorkoutDay.coverImageUrl}
-              />
-            </Link>
+            todayWorkoutDay.isRest ? (
+              <RestDayCard weekDay={todayWorkoutDay.weekDay} />
+            ) : (
+              <Link
+                href={`workout-plans/${todayWorkoutDay.workoutPlanId}/days/${todayWorkoutDay.id}`}
+              >
+                <WorkoutDayCard
+                  name={todayWorkoutDay.name}
+                  weekDay={todayWorkoutDay.weekDay}
+                  estimatedDurationInSeconds={
+                    todayWorkoutDay.estimatedDurationInSeconds
+                  }
+                  exercisesCount={todayWorkoutDay.exercisesCount}
+                  coverImageUrl={todayWorkoutDay.coverImageUrl}
+                />
+              </Link>
+            )
           ) : (
             <p className="text-muted-foreground text-center text-sm">
               Você ainda não tem treino para hoje.
